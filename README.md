@@ -2,11 +2,6 @@
 
 Simple battleShip game written for the JS project
 
-Do pisania gry wykorzystałem pakiet tkinter, jest to standardowy pakiet GUI (Graphical-User-Interface).
-
-Link to oficjalnej strony:  https://wiki.python.org/moin/TkInter
-
-
 ## **Opis Zadania**
   * Okno z dwoma planszami 10x10 pól (np. siatki przycisków) oraz
   przyciskiem rozpoczęcia gry i przyciskiem reset.
