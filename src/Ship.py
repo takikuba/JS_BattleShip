@@ -19,9 +19,12 @@ class Ship(arcade.Sprite):
         super().__init__(sprite, center_x=x_centre, center_y=y_centre, scale=0.5)
 
 class Single_master(Ship):
+    pass
 
 class Two_master(Ship):
+    pass
 
 class Three_master(Ship):
-
+    pass
 class Four_master(Ship):
+    pass
