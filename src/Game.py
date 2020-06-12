@@ -1,18 +1,16 @@
 from tkinter import *
+from Const import *
 # from Logic import *
-
-canvasPlayerX = 0
-canvasPlayerY = 0
-gridSize = 30
 
 
 class StartGame(Frame):
+    """The class that implements the entire game object, contains all necessary methods.
+        Inherits from Tk.Frame, gets 'master' as the constructor parameter."""
 
     def __init__(self, root):
-        super().__init__(root)
-        self.canvas = Canvas(root, width = 800, height = 750, bg="cyan")
-
-
+        self.root = root
+        super().__init__(self.root)
+        self.canvas = Canvas(self.root, width = 850, height = 750)
 
         self.buttonNewGame = Button(self.canvas, text = "New Game", command =  lambda: print('New Game'), bg = "blue")
         self.buttonNewGame.place(x = 100, y = 700, width = 100, height = 30)
@@ -20,28 +18,28 @@ class StartGame(Frame):
         self.buttonQuit = Button(self.canvas, text = "Quit", command = lambda: exit(0), bg = "blue")
         self.buttonQuit.place(x = 300, y = 700, width = 100, height = 30)
 
-
-        self.canvasPlayer = Canvas(self.canvas, bg = "yellow")
-        self.canvasPlayer.place(x = 50, y = 50, width = 300, height = 300 )
-
-        self.gridPlayer = [[Button(self.canvasPlayer) for i in range(0, 10)] for j in range(0, 10)]
-
-        global canvasPlayerX
-        global canvasPlayerY
-        global gridSize
-        xPos = canvasPlayerX
-        yPos = canvasPlayerY
-        for i in range(0, 10):
-            for j in range(0, 10):
-                self.gridPlayer[i][j].place(x = xPos, y = yPos, width = gridSize, height = gridSize)
-                xPos += gridSize
-            yPos += gridSize
-            xPos = canvasPlayerX
-
-        self.canvasAI = Canvas(self.canvas, bg = "green")
-        self.canvasAI.place(x = 400, y = 50, width = 300, height = 300 )
-
         self.canvas.pack()
+
+        self.canvas.data = { }
+        self.canvas.data["play"] = None
+        self.canvas.data["stage"] = None
+        self.canvas.data["axis"] = "horizontal"
+
+        self.canvas.data["gridPlayer"] = {}
+        self.canvas.data["gridAI"] = {}
+
+
+        for i in range(0, 10):
+            self.canvas.data["gridPlayer"][i] = {}
+            for j in range(0, 10):
+                self.canvas.data["gridPlayer"][i][j] = {}
+                self.canvas.data["gridPlayer"][i][j]["ref"] = self.canvas.create_rectangle(GRID_SIZE + j * GRID_SIZE, GRID_SIZE + i * GRID_SIZE, GRID_SIZE * 2 + j * GRID_SIZE, GRID_SIZE * 2 + GRID_SIZE * i, fill = "red")
+
+        for i in range(0, 10):
+            self.canvas.data["gridAI"][i] = {}
+            for j in range(0, 10):
+                self.canvas.data["gridAI"][i][j] = {}
+                self.canvas.data["gridAI"][i][j]["ref"] = self.canvas.create_rectangle(GRID_SIZE + j * GRID_SIZE + GRID_AI_TAB, GRID_SIZE + i * GRID_SIZE, GRID_SIZE * 2 + j * GRID_SIZE + GRID_AI_TAB, GRID_SIZE * 2 + GRID_SIZE * i, fill = "red")
 
 
 root = Tk()
