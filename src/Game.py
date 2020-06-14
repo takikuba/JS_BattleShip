@@ -1,48 +1,100 @@
 from tkinter import *
+from tkinter import messagebox
 from Const import *
 # from Logic import *
 
 
-class StartGame(Frame):
-    """The class that implements the entire game object, contains all necessary methods.
-        Inherits from Tk.Frame, gets 'master' as the constructor parameter."""
+class StartGame(object):
+
+    def printAttentionMessage(self):
+        # print("Method which print information about the wrong placing of the ship!")
+        messagebox.showwarninig("Warning", "Ustaw statek zgodnie z zasadami!!!")
+
+    def aiClick(self):
+        # print("Ai put ship!")
+        pass
+
+    def playerClick(self):
+        # print("Player put ship!")
+        pass
+
+    def quitGame(self):
+        # print("Function which quit from game!")
+        self.root.destroy()
+        exit(0)
+
+    def newGame(self):
+        # print("Function which start New Game!")
+        pass
+
+    def resetGame(self):
+        # print("Function which reset game!")
+        pass
+
+    def rotateShip(self):
+        # print("Function to change direction vertical/horizontal.")
+        pass
+
+    def checkDistance(self):
+        # print("Function which check distance to ships!")
+        pass
+
+    def playerSpaceAroundShip(self):
+        # print("Function which ensure free space around the ship!")
+        pass
+
+    def aiSpaceAroundShip(self):
+        # print("Function which ensure free space around the ship!")
+        pass
+
+    def playerShotShip(self):
+        # print("Function that supports the user's shot!")
+        pass
+
+    def aiShotShip(self):
+        # print("Function that supports the ai shot!")
+        pass
+
+    def getWinner(self):
+        # print("Function that checks the win condition!")
+        pass
 
     def __init__(self, root):
         self.root = root
-        super().__init__(self.root)
-        self.canvas = Canvas(self.root, width = 850, height = 750)
 
-        self.buttonNewGame = Button(self.canvas, text = "New Game", command =  lambda: print('New Game'), bg = "blue")
-        self.buttonNewGame.place(x = 100, y = 700, width = 100, height = 30)
+        self.buttonNewGame = Button(self.root, text = "New Game", height = 2, width = 10, bg = "lightsteelblue", command = self.newGame)
+        self.buttonQuit = Button(self.root, text = "Quit", height = 2, width = 10, bg = "lightsteelblue", command = self.quitGame)
+        self.buttonReset = Button(self.root, text = "Reset", height = 2, width = 10, bg = 'lightsteelblue', command = self.resetGame)
+        self.buttonRotate = Button(self.root, text = "Rotate", height = 2, width = 10, bg = 'lightsteelblue', command = self.rotateShip)
 
-        self.buttonQuit = Button(self.canvas, text = "Quit", command = lambda: exit(0), bg = "blue")
-        self.buttonQuit.place(x = 300, y = 700, width = 100, height = 30)
+        self.gridPlayer = [[0 for i in range(10)] for j in range(10)]
+        self.gridAi = [[0 for i in range(10)] for j in range(10)]
 
-        self.canvas.pack()
+        for i in range(10):
+            for j in range(10):
+                self.gridPlayer[i][j] = Button(self.root, height = 2, width = 3, bg = 'silver', command = lambda i=i, j=j: self.playerClick(i, j))
+                self.gridPlayer[i][j].grid(row = i+3, column = j + 1)
 
-        self.canvas.data = { }
-        self.canvas.data["play"] = None
-        self.canvas.data["stage"] = None
-        self.canvas.data["axis"] = "horizontal"
+        self.textPlayerMap = Label(self.root, height = 3, width = 63, text = "Player Map")
+        self.textPlayerMap.grid(row = 1, column = 1, columnspan = 10)
 
-        self.canvas.data["gridPlayer"] = {}
-        self.canvas.data["gridAI"] = {}
+        self.textAIMap = Label(self.root, height = 3, width = 62, text = 'AI Map')
+        self.textAIMap.grid(row = 1, column = 13, columnspan = 10)
 
+        for i in range(10):
+            for j in range(10):
+                self.gridAi[i][j] = Button(self.root, height = 2, width = 3, bg = 'grey', command = lambda i=i, j=j: self.aiClick(i, j))
+                self.gridAi[i][j].grid(row = i+3, column = j + 13)
 
-        for i in range(0, 10):
-            self.canvas.data["gridPlayer"][i] = {}
-            for j in range(0, 10):
-                self.canvas.data["gridPlayer"][i][j] = {}
-                self.canvas.data["gridPlayer"][i][j]["ref"] = self.canvas.create_rectangle(GRID_SIZE + j * GRID_SIZE, GRID_SIZE + i * GRID_SIZE, GRID_SIZE * 2 + j * GRID_SIZE, GRID_SIZE * 2 + GRID_SIZE * i, fill = "red")
-
-        for i in range(0, 10):
-            self.canvas.data["gridAI"][i] = {}
-            for j in range(0, 10):
-                self.canvas.data["gridAI"][i][j] = {}
-                self.canvas.data["gridAI"][i][j]["ref"] = self.canvas.create_rectangle(GRID_SIZE + j * GRID_SIZE + GRID_AI_TAB, GRID_SIZE + i * GRID_SIZE, GRID_SIZE * 2 + j * GRID_SIZE + GRID_AI_TAB, GRID_SIZE * 2 + GRID_SIZE * i, fill = "red")
+        self.root.grid_columnconfigure(11, minsize = 22)
+        self.buttonNewGame.grid(row=3, column=25, columnspan = 2)
+        self.buttonReset.grid(row=5, column=25, columnspan = 2)
+        self.buttonRotate.grid(row=7, column=25, columnspan = 2)
+        self.buttonQuit.grid(row=9, column=25, columnspan = 2)
 
 
+# Program Start :)
 root = Tk()
 root.title("BattleShip")
 game = StartGame(root = root)
-game.mainloop()
+root.mainloop()
