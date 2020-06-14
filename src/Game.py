@@ -5,13 +5,52 @@ from random import *
 
 
 class StartGame(object):
-    """Klasa realizujaca całość pracy programu."""
+    """A class to represented game object."""
 
     def printAttentionMessage(self):
-        # print("Method which print information about the wrong placing of the ship!")
+        """Method which print information about the wrong placing of the ship."""
         messagebox.showwarning("Warning", "Ustaw statek zgodnie z zasadami!!!")
 
+    def aiShip(self, times, exception):
+        """Method which placing AI ships on the map, and add position to array.
+            :param times: number of iterations
+            :param exception: number to subtraction of the rows/columns number"""
+
+        global aiShipPos
+        global aiSpace
+
+        tmp = []
+        position = randrange(2)
+
+        if position == 1:
+            row = randrange(10-exception)
+            col = randrange(10)
+            for i in range(times):
+                tmp.append((row+i, col))
+
+            if (not[el for el in aiShipPos if el in tmp]) and (not[el for el in aiSpace if el in tmp]):
+                for i in range(times):
+                    aiShipPos.append((row + i, col))
+                    self.aiSpaceAroundShip(position, row, col, times, i)
+            else:
+                self.aiShip(times, exception)
+        else:
+            row = randrange(10)
+            col = randrange(10-exception)
+            for i in range(times):
+                tmp.append((row,col+i))
+            if (not[el for el in aiShipPos if el in tmp]) and (not[el for el in aiSpace if el in tmp]):
+                for i in range(times):
+                    aiShipPos.append((row, col + i))
+
+                    self.aiSpaceAroundShip(position, row, col, times, i)
+            else:
+                pass
+
     def aiClick(self, row, col):
+        """Method which protects the mechanism of shooting to AI ship.
+            :param row: the row number where shot
+            :param col: the col number where shot"""
         # print("Click on ai map!")
         global startGame
         global countShip
@@ -31,127 +70,100 @@ class StartGame(object):
         else:
             messagebox.showinfo("", "Gra nie rozpoczeta!")
 
-    def aiShip(self, times, exception):
-         # print("Ai put ship!")
-         global aiShipPos
-         global aiSpace
-
-         tmp = []
-         position = randrange(2)
-
-         if position == 1:
-              row = randrange(10-exception)
-              col = randrange(10)
-              for i in range(times):
-                   tmp.append((row+i,col))
-
-              if (not[el for el in aiShipPos if el in tmp]) and (not[el for el in aiSpace if el in tmp]):
-                   for i in range(times):
-                        aiShipPos.append((row + i, col))
-                        self.aiSpaceAroundShip(position, row, col, times, i)
-              else:
-                   self.aiShip(times, exception)
-         else:
-              row = randrange(10)
-              col = randrange(10-exception)
-              for i in range(times):
-                   tmp.append((row,col+i))
-              if (not[el for el in aiShipPos if el in tmp]) and (not[el for el in aiSpace if el in tmp]):
-                   for i in range(times):
-                        aiShipPos.append((row, col + i))
-
-                        self.aiSpaceAroundShip(position, row, col, times, i)
-              else:
-                   self.aiShip(times, exception)
 
     def playerClick(self, row, col):
-         # print("Player put ship!")
-         global countShip
-         global rotateShip
-         global countDown
-         global playerSpace
+        """Methods which supports the player placement of ships.
+            :param row: the row number where ship place
+            :param col: the column number where ship place."""
+        # print("Player put ship!")
+        global countShip
+        global rotateShip
+        global countDown
+        global playerSpace
 
-         position = rotateShip % 2
-
-         if (position == 1):
+        position = rotateShip % 2
+        if position == 1:
+            pass
+        else:
+            if countShip < 4:
+                if self.checkDistance(position, row, col, 1)==False:
+                    self.printAttentionMessage()
+                    countShip -= 1
+            elif countShip < 7:
+                if (col + 1)>=10:
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(col+1)<10:
+                    if self.checkDistance(position, row, col, 2)==False:
+                        self.printAttentionMessage()
+                        countShip -= 1
                 if countShip < 4:
                     if self.checkDistance(position, row, col, 1)==False:
-                         self.printAttentionMessage()
-                         countShip -= 1
-                elif(countShip < 7):
-                    if ((row+1)>=10):
                         self.printAttentionMessage()
                         countShip -= 1
-                    elif(row+1)<10:
-                         if self.checkDistance(position, row, col, 2)==False:
-                              self.printAttentionMessage()
-                              countShip -= 1
-                elif countShip < 9:
-                    if (row + 2)>=10:
+                    elif countShip < 7:
+                        if (row + 1)>=10:
+                            self.printAttentionMessage()
+                            countShip -= 1
+                        elif(row+1)<10:
+                            if self.checkDistance(position, row, col, 2)==False:
+                                self.printAttentionMessage()
+                                countShip -= 1
+                    elif countShip < 9:
+                        if (row + 2)>=10:
+                            self.printAttentionMessage()
+                            countShip -= 1
+                        elif(row+2)<10:
+                            if self.checkDistance(position, row, col, 3)==False:
+                                self.printAttentionMessage()
+                                countShip -= 1
+                                countDown += 1
+                    elif countShip < 10:
+                        if (row + 3)>=10:
+                            self.printAttentionMessage()
+                            countShip -= 1
+                        elif(row+3)<10:
+                            if self.checkDistance(position, row, col, 4)==False:
+                                self.printAttentionMessage()
+                                countShip -= 1
+                                countDown += 1
+            elif countShip < 9:
+                if (col + 2)>=10:
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(col+2)<10:
+                    if self.checkDistance(position, row, col, 3)==False:
                         self.printAttentionMessage()
                         countShip -= 1
-                    elif(row+2)<10:
-                         if self.checkDistance(position, row, col, 3)==False:
-                              self.printAttentionMessage()
-                              countShip -= 1
-                              countDown += 1
-                elif countShip < 10:
-                    if (row + 3)>=10:
+                        countDown += 1
+            elif countShip < 10:
+                if (col + 3)>=10:
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(col+3)<10:
+                    if self.checkDistance(position, row, col, 4)==False:
                         self.printAttentionMessage()
                         countShip -= 1
-                    elif(row+3)<10:
-                         if self.checkDistance(position, row, col, 4)==False:
-                              self.printAttentionMessage()
-                              countShip -= 1
-                              countDown += 1
-         else:
-               if countShip < 4:
-                    if self.checkDistance(position, row, col, 1)==False:
-                        self.printAttentionMessage()
-                        countShip -= 1
-               elif countShip < 7:
-                    if (col + 1)>=10:
-                        self.printAttentionMessage()
-                        countShip -= 1
-                    elif(col+1)<10:
-                         if self.checkDistance(position, row, col, 2)==False:
-                              self.printAttentionMessage()
-                              countShip -= 1
-               elif countShip < 9:
-                    if (col + 2)>=10:
-                        self.printAttentionMessage()
-                        countShip -= 1
-                    elif(col+2)<10:
-                         if self.checkDistance(position, row, col, 3)==False:
-                              self.printAttentionMessage()
-                              countShip -= 1
-                              countDown += 1
-               elif countShip < 10:
-                    if (col + 3) >= 10:
-                        self.printAttentionMessage()
-                        countShip -= 1
-                    elif(col+3)<10:
-                         if self.checkDistance(position, row, col, 4)==False:
-                              self.printAttentionMessage()
-                              countShip -= 1
-                              countDown += 1
-         countShip += 1
-         if 7 <= countShip < 11:
-              countDown -=1
-
+                        countDown += 1
+        countShip += 1
+        if countShip>=7 and countShip<11:
+            countDown -=1
 
 
     def quitGame(self):
+        """Method which quit from game, destroy window and close program."""
         # print("Function which quit from game!")
         self.root.destroy()
         exit(0)
 
     def newGame(self):
+        """Method which allow to start the game."""
         # print("Function which start New Game!")
         global startGame
         startGame = True
 
     def resetGame(self):
+        """Method which clear all of the global variables."""
         # print("Function which reset game!")
         global countShip
         global rotateShip
@@ -195,6 +207,7 @@ class StartGame(object):
                 self.gridAi[row][col].configure(bg="gray", state=NORMAL, cursor="hand2", relief=RAISED)
 
     def rotateShip(self):
+        """Method which change the ship orientation."""
         # print("Function to change direction vertical/horizontal.")
         global rotateShip
         global countShip
@@ -202,6 +215,11 @@ class StartGame(object):
         rotateShip += 1
 
     def checkDistance(self, position, row, col, times):
+        """Method that check the ship distance from another one.
+            :param position: co-odinates of ship beginning
+            :param row: row number
+            :param col: column number
+            :param times: the size of ship."""
         # print("Function which check distance to ships!")
         check = []
         global playerSpace
@@ -231,6 +249,14 @@ class StartGame(object):
                 return False
 
     def placeShip1(self, x, row, col, times, i):
+        """Method which update ship co-ordinates.
+            :param x: the name of variable to change,
+            :param row: row number of ship
+            :param col: column number of ship
+            :param times: size of ship
+            :param i: size of ship on other axis
+
+            :return: update list"""
         # print("Function get space, and returned modify.")
 
         x.append((row - 1, col))
@@ -245,6 +271,14 @@ class StartGame(object):
         return x
 
     def placeShip3(self, x, row, col, times, i):
+        """Method which update ship co-ordinates.
+            :param x: the name of variable to change,
+            :param row: row number of ship
+            :param col: column number of ship
+            :param times: size of ship
+            :param i: size of ship on other axis
+
+            :return: update list"""
         # print("Function get space, and returned modify.")
 
         x.append((row, col - 1))
@@ -259,6 +293,13 @@ class StartGame(object):
         return x
 
     def playerSpaceAroundShip(self, position, row, col, times):
+        """Method assurance free space around player ship.
+        Disables the button action around them.
+        :param position: position of ship
+        :param row: row number of ship
+        :param col: column number of ship
+        :param times: size of ship"""
+
         # print("Function which ensure free space around the ship!")
         global playerSpace
 
@@ -283,6 +324,12 @@ class StartGame(object):
             self.gridPlayer[rows][cols].configure(state=DISABLED, cursor="left_ptr")
 
     def aiSpaceAroundShip(self, position, row, col, times, i):
+        """Method that disables the possibility of clicking the buttons around the ship of AI.
+        :param position: position of ship beginnings
+        :param row: row number
+        :param col: columns number
+        :param times: size of ship
+        :param i: size of ship in other axis"""
         # print("Function which ensure free space around the ship!")
         global aiSpace
 
@@ -295,6 +342,7 @@ class StartGame(object):
         aiSpace = list(aiSpace)
 
     def playerShotShip(self):
+        """Method allowing the player to shot."""
         # print("Function that supports the user's shot!")
         global planeNumber
         if planeNumber < 100:
@@ -315,6 +363,7 @@ class StartGame(object):
                 self.resetGame()
 
     def aiShotShip(self, row, col):
+        """Method allowing the AI to shot."""
         # print("Function that supports the ai shot!")
         global countShip
         if countShip > 9:
@@ -322,12 +371,15 @@ class StartGame(object):
                 self.gridAi[row][col].configure(bg="red", state=DISABLED, relief=SUNKEN)
                 aiShot.append((row, col))
                 aiShipPos.remove((row, col))
+                return True
 
             elif (row, col) not in aiMiss:
                 self.gridAi[row][col].configure(bg="blue", state=DISABLED, relief=SUNKEN)
                 aiMiss.append((row, col))
+                return False
 
     def getWinner(self):
+        """Metchod which checks the winning condition."""
         # print("Function that checks the win condition!")
         global aiShipPos
         global playerShipPos
