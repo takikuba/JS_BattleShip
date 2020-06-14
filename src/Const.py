@@ -1,6 +1,6 @@
 countShip = 0
 rotateShip = 0
-click_game = 0
+planeNumber = 0
 countDown = 3
 
 playerShipPos = []
@@ -13,3 +13,5 @@ aiSpace = []
 playerMiss = []
 playerShot = []
 playerSpace = []
+
+startGame = False
