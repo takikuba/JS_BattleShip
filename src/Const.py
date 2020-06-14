@@ -1,2 +1,15 @@
-GRID_SIZE = 30
-GRID_AI_TAB = 350
+countShip = 0
+rotateShip = 0
+click_game = 0
+countDown = 3
+
+playerShipPos = []
+aiShipPos = []
+
+aiMiss = []
+aiShot = []
+aiSpace = []
+
+playerMiss = []
+playerShot = []
+playerSpace = []

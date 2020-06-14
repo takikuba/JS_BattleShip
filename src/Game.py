@@ -1,22 +1,93 @@
 from tkinter import *
 from tkinter import messagebox
 from Const import *
-# from Logic import *
-
 
 class StartGame(object):
+    """Klasa realizujaca całość pracy programu."""
 
     def printAttentionMessage(self):
         # print("Method which print information about the wrong placing of the ship!")
-        messagebox.showwarninig("Warning", "Ustaw statek zgodnie z zasadami!!!")
+        messagebox.showwarning("Warning", "Ustaw statek zgodnie z zasadami!!!")
 
     def aiClick(self):
         # print("Ai put ship!")
         pass
 
-    def playerClick(self):
+    def playerClick(self, row, col):
         # print("Player put ship!")
-        pass
+        global countShip
+        global rotateShip
+        global countDown
+        global playerSpace
+
+        position = rotateShip % 2
+
+        if ( position == 1):
+            if(countShip < 4):
+                if(self.checkDistance(position, row, col, 1) == False):
+                    self.printAttentionMessage()
+                    countShip -= 1
+            elif(countShip < 7):
+                if((row+1 >= 10)):
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(row+1) < 10:
+                    if(self.checkDistance(position, row, col, 2) == False):
+                        self.printAttentionMessage()
+                        countShip -= 1
+            elif(countShip < 9):
+                if((row + 2) >= 10):
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(row+2) < 10:
+                    if(self.checkDistance(position, row, col, 3) == False):
+                        self.printAttentionMessage()
+                        countShip -= 1
+                        countDown += 1
+            elif(countShip < 10):
+                if ((row + 3) >= 10):
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(row + 3) < 10:
+                    if(self.checkDistance(position, row, col, 4) == False):
+                        self.printAttentionMessage()
+                        countShip -= 1
+                        countDown += 1
+        else:
+            if( countShip < 4):
+                if(self.checkDistance(position, row, col, 1) == False):
+                    self.printAttentionMessage()
+                    countShip -= 1
+            elif( countShip < 7):
+                if((col + 1) >= 10):
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(col + 1) < 10:
+                    if(self.checkDistance(position, row, col, 2) == False):
+                        self.printAttentionMessage()
+                        countShip -= 1
+            elif(countShip < 9):
+                    if ((col+2)>=10):
+                        self.printAttentionMessage()
+                        countShip -= 1
+                    elif(col+2)<10:
+                         if (self.checkDistance(position, row, col, 3)==False):
+                              self.printAttentionMessage()
+                              countShip -= 1
+                              countDown += 1
+            elif(countShip < 10):
+                if ((col+3)>=10):
+                    self.printAttentionMessage()
+                    countShip -= 1
+                elif(col+3)<10:
+                     if (self.checkDistance(position, row, col, 4)==False):
+                          self.printAttentionMessage()
+                          countShip -= 1
+                          countDown += 1
+        countShip += 1
+        if(countShip >= 7 and countShip < 11):
+              countDown -=1
+
 
     def quitGame(self):
         # print("Function which quit from game!")
@@ -33,19 +104,104 @@ class StartGame(object):
 
     def rotateShip(self):
         # print("Function to change direction vertical/horizontal.")
-        pass
+        global rotateShip
+        global countShip
 
-    def checkDistance(self):
+        rotateShip += 1
+
+    def checkDistance(self, position, row, col, times):
         # print("Function which check distance to ships!")
-        pass
+        check_list =[]
+        global playerSpace
+        global playerShipPos
 
-    def playerSpaceAroundShip(self):
-        # print("Function which ensure free space around the ship!")
-        pass
+        if (position == 1):
+              for i in range(times):
+                   check_list.append((row+i,col))
+              if((not[el for el in playerSpace if el in check_list]) and (not[el for el in playerShipPos if el in check_list])):
+                   for i in range(times):
+                        playerShipPos.append((row + i, col))
+                        self.gridPlayer[row+i][col].configure(bg="black", state=DISABLED, cursor="left_ptr", relief=SUNKEN)
+                   self.playerSpaceAroundShip(position, row, col, times)
+                   self.aiShotShip(times,times-1)
+              else:
+                   return False
+        else:
+              for i in range(times):
+                   check_list.append((row,col+i))
+              if (not[el for el in playerSpace if el in check_list]) and (not[el for el in playerShipPos if el in check_list]):
+                   for i in range(times):
+                        playerShipPos.append((row, col + i))
+                        self.gridPlayer[row][col+i].configure(bg="black", state=DISABLED, cursor="left_ptr", relief=SUNKEN)
+                   self.playerSpaceAroundShip(position, row, col, times)
+                   self.aiShotShip(times, times-1)
+              else:
+                   return False
 
-    def aiSpaceAroundShip(self):
+    def placeShip1(self, x, row, col, times, i):
+        # print("Function get space, and returned modify.")
+
+        x.append((row - 1, col))
+        x.append((row - 1, col + 1))
+        x.append((row - 1, col - 1))
+        x.append((row + times, col))
+        x.append((row + times, col + 1))
+        x.append((row + times, col - 1))
+        x.append((row + i, col + 1))
+        x.append((row + i, col - 1))
+
+        return x
+
+    def placeShip3(self, x, row, col, times, i):
+        # print("Function get space, and returned modify.")
+
+        x.append((row, col - 1))
+        x.append((row + 1, col - 1))
+        x.append((row - 1, col - 1))
+        x.append((row, col + times))
+        x.append((row + 1, col + times))
+        x.append((row - 1, col + times))
+        x.append((row + 1, col + i))
+        x.append((row - 1, col + i))
+
+        return x
+
+
+    def playerSpaceAroundShip(self, position, row, col, times):
         # print("Function which ensure free space around the ship!")
-        pass
+        global playerSpace
+
+        if (position == 1):
+          for i in range(times):
+                playerSpace = self.placeShip1(playerSpace, row, col, times, i)
+        else:
+          for i in range(times):
+                playerSpace = self.placeShip3(playerSpace, row, col, times, i)
+        tmp=[]
+
+        for i in range((len(playerSpace))):
+          rows,cols = playerSpace[i]
+          if((rows >= 0 and rows <= 9) and (cols >= 0 and cols <= 9)):
+               tmp.append((rows,cols))
+
+        playerSpace = set(tmp)
+        playerSpace = list(playerSpace)
+
+        for i in playerSpace:
+          rows,cols = i
+          self.button_player[rows][cols].configure(state=DISABLED, cursor="left_ptr")
+
+    def aiSpaceAroundShip(self, position, row, col, times, i):
+        # print("Function which ensure free space around the ship!")
+        global aiSpace
+
+        if (position == 1):
+            aiSpace = self.placeShip1(aiSpace, row, col, times, i)
+        else:
+            aiSpace = self.placeShip3(aiSpace, row, col, times, i)
+
+        aiSpace = set(aiSpace)
+        aiSpace = list(aiSpace)
 
     def playerShotShip(self):
         # print("Function that supports the user's shot!")
@@ -57,7 +213,15 @@ class StartGame(object):
 
     def getWinner(self):
         # print("Function that checks the win condition!")
-        pass
+        global aiShipPos
+        global playerShipPos
+
+        if ((len(aiShipPos) == 0) and (countShip >= 10)):
+            messagebox.showinfo("", "Wygrana!")
+        elif ((len(playerShipPos) == 0) and (countShip >= 10)):
+             messagebox.showinfo("", "Przegrana!")
+
+
 
     def __init__(self, root):
         self.root = root
